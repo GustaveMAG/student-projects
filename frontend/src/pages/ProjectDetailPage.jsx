@@ -4,6 +4,7 @@ import { projectsApi, tasksApi, deliverablesApi, usersApi } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import ProgressBar from '../components/ProgressBar';
 import TaskStatusBadge from '../components/TaskStatusBadge';
+import KanbanBoard from '../components/KanbanBoard';
 import toast from 'react-hot-toast';
 import { format, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -27,6 +28,7 @@ export default function ProjectDetailPage() {
   const [loading, setLoading]           = useState(true);
   const [tab, setTab]                   = useState('tasks');
   const [taskFilter, setTaskFilter]     = useState('all'); // all | todo | in_progress | done
+  const [taskView, setTaskView]         = useState('list'); // list | kanban
 
   /* ── Chargement initial ── */
   const load = useCallback(async () => {
@@ -270,27 +272,64 @@ export default function ProjectDetailPage() {
       {tab === 'tasks' && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            {/* Filtres statut */}
-            <div className="flex gap-2 flex-wrap">
-              {[
-                { value: 'all',         label: 'Toutes', count: tasks.length },
-                { value: 'todo',        label: 'À faire', count: tasks.filter((t) => t.statut === 'todo').length },
-                { value: 'in_progress', label: 'En cours', count: tasks.filter((t) => t.statut === 'in_progress').length },
-                { value: 'done',        label: 'Terminées', count: tasks.filter((t) => t.statut === 'done').length },
-              ].map(({ value, label, count }) => (
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Filtres statut — seulement en vue liste */}
+              {taskView === 'list' && (
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { value: 'all',         label: 'Toutes',    count: tasks.length },
+                    { value: 'todo',        label: 'À faire',   count: tasks.filter((t) => t.statut === 'todo').length },
+                    { value: 'in_progress', label: 'En cours',  count: tasks.filter((t) => t.statut === 'in_progress').length },
+                    { value: 'done',        label: 'Terminées', count: tasks.filter((t) => t.statut === 'done').length },
+                  ].map(({ value, label, count }) => (
+                    <button
+                      key={value}
+                      onClick={() => setTaskFilter(value)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        taskFilter === value
+                          ? 'bg-purple-700 text-white'
+                          : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {label} ({count})
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Toggle Liste / Kanban */}
+              <div className="flex rounded-lg border border-gray-200 overflow-hidden">
                 <button
-                  key={value}
-                  onClick={() => setTaskFilter(value)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                    taskFilter === value
+                  onClick={() => setTaskView('list')}
+                  title="Vue liste"
+                  className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors ${
+                    taskView === 'list'
                       ? 'bg-purple-700 text-white'
-                      : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+                      : 'bg-white text-gray-500 hover:bg-gray-50'
                   }`}
                 >
-                  {label} ({count})
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                  </svg>
+                  Liste
                 </button>
-              ))}
+                <button
+                  onClick={() => setTaskView('kanban')}
+                  title="Vue Kanban"
+                  className={`px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-colors ${
+                    taskView === 'kanban'
+                      ? 'bg-purple-700 text-white'
+                      : 'bg-white text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 3h7v7H3V3zm11 0h7v7h-7V3zM3 14h7v7H3v-7zm11 0h7v7h-7v-7z" />
+                  </svg>
+                  Kanban
+                </button>
+              </div>
             </div>
+
             <Link to={`/projects/${id}/tasks/new`} className="btn-primary">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -299,27 +338,51 @@ export default function ProjectDetailPage() {
             </Link>
           </div>
 
-          {filteredTasks.length === 0 ? (
-            <div className="card text-center py-14 text-gray-400">
-              <p className="text-3xl mb-2">✅</p>
-              <p className="font-medium">
-                {taskFilter === 'all' ? 'Aucune tâche pour ce projet' : `Aucune tâche « ${taskFilter === 'todo' ? 'À faire' : taskFilter === 'in_progress' ? 'En cours' : 'Terminée'} »`}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {filteredTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  projectId={id}
-                  userId={user.id}
-                  isEncadrant={isEncadrant}
-                  onStatusChange={handleStatusChange}
-                  onDelete={handleDeleteTask}
-                />
-              ))}
-            </div>
+          {/* ── Vue Kanban ── */}
+          {taskView === 'kanban' && (
+            tasks.length === 0 ? (
+              <div className="card text-center py-14 text-gray-400">
+                <p className="text-3xl mb-2">📋</p>
+                <p className="font-medium">Aucune tâche pour ce projet</p>
+              </div>
+            ) : (
+              <KanbanBoard
+                tasks={tasks}
+                projectId={id}
+                userId={user.id}
+                isEncadrant={isEncadrant}
+                onStatusChange={handleStatusChange}
+                onDelete={handleDeleteTask}
+              />
+            )
+          )}
+
+          {/* ── Vue Liste ── */}
+          {taskView === 'list' && (
+            filteredTasks.length === 0 ? (
+              <div className="card text-center py-14 text-gray-400">
+                <p className="text-3xl mb-2">✅</p>
+                <p className="font-medium">
+                  {taskFilter === 'all'
+                    ? 'Aucune tâche pour ce projet'
+                    : `Aucune tâche « ${taskFilter === 'todo' ? 'À faire' : taskFilter === 'in_progress' ? 'En cours' : 'Terminée'} »`}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredTasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    projectId={id}
+                    userId={user.id}
+                    isEncadrant={isEncadrant}
+                    onStatusChange={handleStatusChange}
+                    onDelete={handleDeleteTask}
+                  />
+                ))}
+              </div>
+            )
           )}
         </div>
       )}
