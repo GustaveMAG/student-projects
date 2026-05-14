@@ -15,7 +15,7 @@ import TaskDetailPage   from './pages/TaskDetailPage';
 // ── Guards ────────────────────────────────────────────────────────────────────
 function RequireAuth({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex h-screen items-center justify-center text-primary-muted bg-base text-sm">Chargement…</div>;
+  if (loading) return <div className="flex h-screen items-center justify-center text-gray-400">Chargement...</div>;
   return user ? children : <Navigate to="/login" replace />;
 }
 
@@ -36,18 +36,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#1A1A1A',
-              color: '#F5F5F5',
-              border: '1px solid #2A2A2A',
-              fontSize: '13px',
-            },
-          }}
-        />
+        <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
         <Routes>
           {/* Public */}
           <Route path="/login"    element={<LoginPage />} />
