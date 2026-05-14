@@ -29,10 +29,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* ── Panneau gauche – branding ── */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex-col justify-between p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 flex-col justify-between p-12 relative overflow-hidden">
         {/* Cercles décoratifs */}
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-purple-600 opacity-20" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-indigo-500 opacity-20 translate-x-1/3 translate-y-1/3" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-primary-600 opacity-20" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-primary-500 opacity-20 translate-x-1/3 translate-y-1/3" />
         <div className="absolute top-1/2 left-1/2 w-48 h-48 rounded-full bg-orange-400 opacity-10 -translate-x-1/2 -translate-y-1/2" />
 
         {/* Logo */}
@@ -54,7 +54,7 @@ export default function LoginPage() {
             Gérez vos projets<br />
             <span className="text-orange-400">efficacement.</span>
           </h1>
-          <p className="text-purple-200 text-lg leading-relaxed">
+          <p className="text-primary-200 text-lg leading-relaxed">
             Suivez l'avancement, collaborez en équipe et livrez dans les délais.
           </p>
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
             ].map(({ icon, text }) => (
               <div key={text} className="flex items-center gap-3">
                 <span className="text-xl">{icon}</span>
-                <span className="text-purple-200 text-sm">{text}</span>
+                <span className="text-primary-200 text-sm">{text}</span>
               </div>
             ))}
           </div>
@@ -79,7 +79,7 @@ export default function LoginPage() {
           <div className="w-8 h-8 rounded bg-white/10 flex items-center justify-center">
             <span className="text-white text-xs font-bold">J</span>
           </div>
-          <span className="text-purple-300 text-sm">JUNIA — Grande École d'Ingénieurs</span>
+          <span className="text-primary-300 text-sm">JUNIA — Grande École d'Ingénieurs</span>
         </div>
       </div>
 
@@ -187,7 +187,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-purple-700 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary-800 px-4 py-3 text-sm font-semibold text-white hover:bg-primary-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -222,7 +222,7 @@ export default function LoginPage() {
           {/* Lien inscription */}
           <p className="text-center text-sm text-gray-600">
             Pas encore de compte ?{' '}
-            <Link to="/register" className="font-semibold text-purple-700 hover:text-purple-900 hover:underline transition-colors">
+            <Link to="/register" className="font-semibold text-primary-700 hover:text-primary-900 hover:underline transition-colors">
               Créer un compte
             </Link>
           </p>

@@ -163,103 +163,120 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      {/* ── Hero Header ── */}
+      <div className="bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 px-7 pt-6 pb-0 relative overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-white/5" />
+        <div className="absolute bottom-0 right-32 w-24 h-24 rounded-full bg-accent-500/10" />
 
-      {/* ── Breadcrumb ── */}
-      <nav className="flex items-center gap-2 text-sm text-gray-400">
-        <Link to="/projects" className="hover:text-purple-600 transition-colors">Projets</Link>
-        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-        <span className="text-gray-700 font-medium truncate">{project.titre}</span>
-      </nav>
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-white/50 mb-4 relative z-10">
+          <Link to="/projects" className="hover:text-white/80 transition-colors">Projets</Link>
+          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+          <span className="text-white/80 font-medium truncate">{project.titre}</span>
+        </nav>
 
-      {/* ── Header ── */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900 leading-tight">{project.titre}</h1>
-          {project.description && (
-            <p className="text-gray-500 mt-1.5 leading-relaxed max-w-2xl">{project.description}</p>
+        {/* Title + actions */}
+        <div className="flex flex-wrap items-start justify-between gap-4 relative z-10">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-white leading-tight">{project.titre}</h1>
+            {project.description && (
+              <p className="text-white/60 mt-1.5 text-sm leading-relaxed max-w-2xl">{project.description}</p>
+            )}
+          </div>
+          {isEncadrant && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link to={`/projects/${id}/edit`} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition-colors border border-white/20">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Modifier
+              </Link>
+              <button onClick={handleDeleteProject} className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-sm font-medium rounded-lg transition-colors border border-red-400/20">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Supprimer
+              </button>
+            </div>
           )}
         </div>
-        {isEncadrant && (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Link to={`/projects/${id}/edit`} className="btn-secondary">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-              Modifier
-            </Link>
-            <button onClick={handleDeleteProject} className="btn-danger">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              Supprimer
-            </button>
-          </div>
-        )}
-      </div>
 
-      {/* ── Bloc infos + progression ── */}
-      <div className="grid sm:grid-cols-3 gap-4">
-        {/* Progression */}
-        <div className="sm:col-span-2 card">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-700">Progression globale</h3>
-            <span className={`text-2xl font-bold ${pct === 100 ? 'text-green-600' : 'text-purple-700'}`}>
-              {pct}%
-            </span>
+        {/* Meta info row */}
+        <div className="flex flex-wrap items-center gap-5 mt-4 relative z-10 text-sm">
+          <div className="flex items-center gap-2 text-white/70">
+            <span>👨‍🏫</span>
+            <span>Encadrant : <strong className="text-white">{project.encadrant_nom}</strong></span>
           </div>
-          <ProgressBar value={pct} size="lg" showLabel={false} />
-          <div className="flex flex-wrap gap-5 mt-4 text-sm">
-            <StatBadge label="Total" value={tasks.length} color="gray" />
-            <StatBadge label="Terminées" value={doneTasks} color="green" />
-            <StatBadge label="En cours" value={tasks.filter((t) => t.statut === 'in_progress').length} color="blue" />
-            <StatBadge label="En retard" value={lateTasks} color="red" />
+          <div className="flex items-center gap-2 text-white/70">
+            <span>👥</span>
+            <div className="flex items-center gap-1">
+              {project.members.slice(0, 4).map((m, i) => (
+                <div
+                  key={m.id}
+                  className="w-6 h-6 rounded-full border border-white/30 flex items-center justify-center text-[10px] font-bold text-white -ml-1.5 first:ml-0"
+                  style={{ background: `hsl(${(i * 70 + 200)}deg 55% 55%)` }}
+                  title={m.nom}
+                >
+                  {m.nom.charAt(0)}
+                </div>
+              ))}
+              <span className="text-white/60 text-xs ml-1">{project.members.length} membre{project.members.length > 1 ? 's' : ''}</span>
+            </div>
           </div>
-        </div>
-
-        {/* Infos projet */}
-        <div className="card space-y-3 text-sm">
-          <InfoRow label="Encadrant" value={project.encadrant_nom} icon="👨‍🏫" />
-          <InfoRow label="Équipe" value={`${project.members.length} membre${project.members.length > 1 ? 's' : ''}`} icon="👥" />
-          {project.date_debut && (
-            <InfoRow
-              label="Début"
-              value={format(parseISO(project.date_debut), 'dd MMM yyyy', { locale: fr })}
-              icon="📅"
-            />
-          )}
           {project.date_fin && (
-            <InfoRow
-              label="Fin"
-              value={format(parseISO(project.date_fin), 'dd MMM yyyy', { locale: fr })}
-              icon={isPast(parseISO(project.date_fin)) && pct < 100 ? '⚠️' : '🏁'}
-              alert={isPast(parseISO(project.date_fin)) && pct < 100}
-            />
+            <div className="flex items-center gap-1.5 text-white/70">
+              <span>{isPast(parseISO(project.date_fin)) && pct < 100 ? '⚠️' : '📅'}</span>
+              <span>Deadline : <strong className={`${isPast(parseISO(project.date_fin)) && pct < 100 ? 'text-red-300' : 'text-white'}`}>
+                {format(parseISO(project.date_fin), 'dd MMM yyyy', { locale: fr })}
+              </strong></span>
+            </div>
           )}
+          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+            pct === 100 ? 'bg-purple-400/20 text-purple-200'
+            : lateTasks > 0 ? 'bg-red-400/20 text-red-300'
+            : 'bg-green-400/20 text-green-300'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${pct === 100 ? 'bg-purple-300' : lateTasks > 0 ? 'bg-red-400' : 'bg-green-400'}`} />
+            {pct === 100 ? 'Terminé' : lateTasks > 0 ? `${lateTasks} en retard` : 'En bonne voie'}
+          </div>
         </div>
-      </div>
 
-      {/* ── Onglets ── */}
-      <div className="border-b border-gray-200">
-        <nav className="flex gap-1 -mb-px">
+        {/* Progress bar */}
+        <div className="mt-5 relative z-10">
+          <div className="flex justify-between text-xs text-white/50 mb-1.5">
+            <span>Progression</span>
+            <span>{doneTasks}/{tasks.length} tâches · {pct}%</span>
+          </div>
+          <div className="h-2 bg-white/15 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-accent-500 rounded-full transition-all duration-700"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        </div>
+
+        {/* ── Onglets (dans le hero) ── */}
+        <nav className="flex gap-1 mt-5 -mb-px relative z-10">
           {TABS.map(({ key, label, icon }) => (
             <button
               key={key}
               onClick={() => setTab(key)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 tab === key
-                  ? 'border-purple-600 text-purple-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-accent-500 text-white'
+                  : 'border-transparent text-white/50 hover:text-white/80'
               }`}
             >
               <span>{icon}</span>
               {label}
               <span className={`text-xs rounded-full px-1.5 py-0.5 font-semibold ${
-                tab === key ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-500'
+                tab === key ? 'bg-white/20 text-white' : 'bg-white/10 text-white/50'
               }`}>
                 {tabCounts[key]}
               </span>
@@ -267,6 +284,8 @@ export default function ProjectDetailPage() {
           ))}
         </nav>
       </div>
+
+    <div className="p-7 space-y-5">
 
       {/* ══════════════ ONGLET TÂCHES ══════════════ */}
       {tab === 'tasks' && (
@@ -572,6 +591,7 @@ export default function ProjectDetailPage() {
         </div>
       )}
     </div>
+    </>
   );
 }
 
