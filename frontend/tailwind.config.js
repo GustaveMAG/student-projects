@@ -4,28 +4,20 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50:  '#f3eeff',
-          100: '#e9deff',
-          200: '#d4bdff',
-          300: '#b896ff',
-          400: '#9d6ff5',
-          500: '#7c4de8',
-          600: '#6830d0',
-          700: '#5522b0',
-          800: '#3D1A6E',
-          900: '#2D1057',
-        },
-        accent: {
-          50:  '#fff4ee',
-          100: '#ffe8d9',
-          400: '#ff8c5a',
-          500: '#FF6B35',
-          600: '#e85520',
-        },
+        base:    '#0F0F0F',
+        surface: '#1A1A1A',
+        'surface-2': '#222222',
+        border:  '#2A2A2A',
+        'border-2': '#333333',
+        primary: { DEFAULT: '#F5F5F5', muted: '#888888' },
+        accent:  { DEFAULT: '#7C3AED', hover: '#6D28D9', soft: '#1E1A2E' },
+        success: '#22C55E',
+        warning: '#F59E0B',
+        danger:  '#EF4444',
       },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+      fontSize: {
+        'label': ['11px', { letterSpacing: '0.08em', fontWeight: '500' }],
       },
     },
   },
