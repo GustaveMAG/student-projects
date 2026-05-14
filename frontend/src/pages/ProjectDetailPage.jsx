@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { projectsApi, tasksApi, deliverablesApi, usersApi, fileUrl } from '../lib/api';
+import { projectsApi, tasksApi, deliverablesApi, usersApi, fileUrl, API_BASE } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import ProgressBar from '../components/ProgressBar';
 import TaskStatusBadge from '../components/TaskStatusBadge';
@@ -105,6 +105,26 @@ export default function ProjectDetailPage() {
       toast.success('Tâche supprimée');
     } catch {
       toast.error('Impossible de supprimer la tâche');
+    }
+  };
+
+  /* ── Téléchargement cross-origin ── */
+  const handleDownload = async (url, nom) => {
+    try {
+      const fullUrl = fileUrl(url);
+      const res = await fetch(fullUrl);
+      if (!res.ok) throw new Error('Fichier introuvable');
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = nom;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      toast.error('Impossible de télécharger le fichier');
     }
   };
 
@@ -457,9 +477,8 @@ export default function ProjectDetailPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <a
-                      href={fileUrl(d.url)}
-                      download
+                    <button
+                      onClick={() => handleDownload(d.url, d.nom_fichier)}
                       className="text-gray-400 hover:text-gray-700 transition-colors"
                       title="Télécharger"
                     >
@@ -467,7 +486,7 @@ export default function ProjectDetailPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                           d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                    </a>
+                    </button>
                     {(isEncadrant || d.uploade_par === user.id) && (
                       <button
                         onClick={() => handleDeleteDeliverable(d.id, d.nom_fichier)}

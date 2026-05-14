@@ -21,8 +21,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir les fichiers uploadés
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// Servir les fichiers uploadés avec CORS pour permettre le téléchargement cross-origin
+app.use('/uploads', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Expose-Headers', 'Content-Disposition');
+  next();
+}, express.static(path.join(__dirname, '../uploads')));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api/auth',     authRoutes);
