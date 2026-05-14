@@ -1,10 +1,17 @@
 import axios from 'axios';
 
+export const API_BASE = process.env.REACT_APP_API_URL || '';
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL
-    ? `${process.env.REACT_APP_API_URL}/api`
-    : '/api',
+  baseURL: API_BASE ? `${API_BASE}/api` : '/api',
 });
+
+// Construit l'URL complète d'un fichier uploadé (ex: /uploads/xxx.pdf)
+export function fileUrl(url) {
+  if (!url) return '#';
+  if (url.startsWith('http')) return url;
+  return `${API_BASE}${url}`;
+}
 
 // Attache le JWT à chaque requête
 api.interceptors.request.use((config) => {

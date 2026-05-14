@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { projectsApi, tasksApi, deliverablesApi, usersApi } from '../lib/api';
+import { projectsApi, tasksApi, deliverablesApi, usersApi, fileUrl } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import ProgressBar from '../components/ProgressBar';
 import TaskStatusBadge from '../components/TaskStatusBadge';
@@ -441,10 +441,10 @@ export default function ProjectDetailPage() {
                   {/* Infos */}
                   <div className="flex-1 min-w-0">
                     <a
-                      href={d.url}
+                      href={fileUrl(d.url)}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-sm font-medium text-purple-700 hover:text-purple-900 hover:underline truncate block"
+                      className="text-sm font-medium text-primary-700 hover:text-primary-900 hover:underline truncate block"
                     >
                       {d.nom_fichier}
                     </a>
@@ -458,7 +458,7 @@ export default function ProjectDetailPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <a
-                      href={d.url}
+                      href={fileUrl(d.url)}
                       download
                       className="text-gray-400 hover:text-gray-700 transition-colors"
                       title="Télécharger"
