@@ -2,39 +2,6 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const db      = require('../config/db');
 const { authenticate } = require('../middleware/auth');
-const { sendTaskAssigned } = require('../services/emailService');
-
-// ── helper : envoie l'email à l'assigné ──────────────────────────────────────
-async function notifyAssignee({ taskId, taskTitle, projectId, deadline, assignedBy, assigneeId }) {
-  try {
-    // Récupère email + nom de l'assigné
-    const { rows: userRows } = await db.query(
-      'SELECT nom, email FROM users WHERE id = $1',
-      [assigneeId]
-    );
-    if (!userRows.length) return;
-
-    // Récupère le nom du projet
-    const { rows: projRows } = await db.query(
-      'SELECT nom FROM projects WHERE id = $1',
-      [projectId]
-    );
-    const projectName = projRows.length ? projRows[0].nom : 'Projet';
-
-    await sendTaskAssigned({
-      to:          userRows[0].email,
-      studentName: userRows[0].nom,
-      taskTitle,
-      taskId,
-      projectName,
-      projectId,
-      deadline,
-      assignedBy,
-    });
-  } catch (err) {
-    console.error('[notifyAssignee]', err.message);
-  }
-}
 
 const router = express.Router({ mergeParams: true }); // hérite projectId
 router.use(authenticate);
@@ -144,20 +111,7 @@ router.post(
           deadline || null,
         ]
       );
-      const task = rows[0];
-      res.status(201).json(task);
-
-      // ── Email de notification (non bloquant) ──
-      if (assigne_a) {
-        notifyAssignee({
-          taskId:    task.id,
-          taskTitle: titre,
-          projectId,
-          deadline,
-          assignedBy: req.user.nom,
-          assigneeId: assigne_a,
-        }).catch(console.error);
-      }
+      res.status(201).json(rows[0]);
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: 'Erreur serveur' });
@@ -190,20 +144,7 @@ router.put('/:id', async (req, res) => {
       ]
     );
     if (!rows.length) return res.status(404).json({ message: 'Tâche introuvable' });
-    const task = rows[0];
-    res.json(task);
-
-    // ── Email si l'assigné a changé ──
-    if (assigne_a && String(assigne_a) !== String(task.assigne_a)) {
-      notifyAssignee({
-        taskId:    task.id,
-        taskTitle: titre,
-        projectId,
-        deadline,
-        assignedBy: req.user.nom,
-        assigneeId: assigne_a,
-      }).catch(console.error);
-    }
+    res.json(rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -211,7 +152,6 @@ router.put('/:id', async (req, res) => {
 });
 
 // ── PATCH /api/projects/:projectId/tasks/:id/status ───────────────────────────
-// Mise à jour rapide du statut uniquement
 router.patch('/:id/status', async (req, res) => {
   const { projectId, id } = req.params;
   const { statut } = req.body;
