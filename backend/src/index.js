@@ -14,19 +14,8 @@ const app  = express();
 const PORT = process.env.PORT || 5000;
 
 // ── Middlewares globaux ───────────────────────────────────────────────────────
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://student-projects-nine.vercel.app',
-  process.env.CLIENT_URL,
-].filter(Boolean);
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // Autoriser les requêtes sans origin (Postman, mobile, etc.)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
-  },
+  origin: true,
   credentials: true,
 }));
 app.use(express.json());
