@@ -120,8 +120,20 @@ router.post(
 );
 
 // ── PUT /api/projects/:projectId/tasks/:id ────────────────────────────────────
-router.put('/:id', async (req, res) => {
+router.put(
+  '/:id',
+  [
+    body('titre').trim().notEmpty().withMessage('Titre requis'),
+    body('statut').isIn(['todo', 'in_progress', 'done']).withMessage('Statut invalide'),
+    body('deadline').optional({ nullable: true, checkFalsy: true }).isDate().withMessage('Date invalide'),
+    body('assigne_a').optional({ nullable: true, checkFalsy: true }).isInt().withMessage('Assigné invalide'),
+  ],
+  async (req, res) => {
   const { projectId, id } = req.params;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   try {
     if (!(await canAccessProject(projectId, req.user))) {
       return res.status(403).json({ message: 'Accès refusé' });

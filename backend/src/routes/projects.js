@@ -131,8 +131,20 @@ router.post(
 );
 
 // ── PUT /api/projects/:id ─────────────────────────────────────────────────────
-router.put('/:id', requireRole('encadrant'), async (req, res) => {
+router.put(
+  '/:id',
+  requireRole('encadrant'),
+  [
+    body('titre').trim().notEmpty().withMessage('Titre requis'),
+    body('date_debut').optional({ nullable: true, checkFalsy: true }).isDate().withMessage('Date de début invalide'),
+    body('date_fin').optional({ nullable: true, checkFalsy: true }).isDate().withMessage('Date de fin invalide'),
+  ],
+  async (req, res) => {
   const { id } = req.params;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
   try {
     if (!(await isProjectEncadrant(id, req.user.id))) {
       return res.status(403).json({ message: 'Accès refusé' });
