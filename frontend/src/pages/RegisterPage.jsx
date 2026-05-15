@@ -22,17 +22,16 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const navigate     = useNavigate();
 
-  const [form, setForm] = useState({ nom: '', email: '', password: '', role: 'etudiant', code: '' });
+  const [form, setForm] = useState({ nom: '', email: '', password: '', role: 'etudiant' });
   const [showPwd, setShowPwd]   = useState(false);
   const [loading, setLoading]   = useState(false);
   const [errors, setErrors]     = useState({});
 
   const validate = () => {
     const e = {};
-    if (!form.nom.trim())                           e.nom      = 'Le nom est requis';
-    if (!form.email.includes('@'))                  e.email    = 'Email invalide';
-    if (form.password.length < 6)                  e.password = 'Minimum 6 caractères';
-    if (form.role === 'encadrant' && !form.code.trim()) e.code = 'Code encadrant requis';
+    if (!form.nom.trim())            e.nom      = 'Le nom est requis';
+    if (!form.email.includes('@'))   e.email    = 'Email invalide';
+    if (form.password.length < 6)   e.password = 'Minimum 6 caractères';
     return e;
   };
 
@@ -273,30 +272,6 @@ export default function RegisterPage() {
                 </div>
               )}
             </div>
-
-            {/* Code encadrant (conditionnel) */}
-            {form.role === 'encadrant' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">Code d'accès encadrant</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
-                  </div>
-                  <input
-                    type="password"
-                    className={`input pl-10 ${errors.code ? 'border-red-400 focus:ring-red-400' : ''}`}
-                    placeholder="Code fourni par l'administration"
-                    value={form.code}
-                    onChange={(e) => field('code', e.target.value)}
-                    autoComplete="off"
-                  />
-                </div>
-                {errors.code && <p className="text-xs text-red-500 mt-1">{errors.code}</p>}
-              </div>
-            )}
 
             {/* Bouton */}
             <button
