@@ -20,7 +20,15 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { nom, email, password, role } = req.body;
+    const { nom, email, password, role, code } = req.body;
+
+    // Seul un code secret autorise l'inscription en tant qu'encadrant
+    if (role === 'encadrant') {
+      const secret = process.env.ENCADRANT_SECRET;
+      if (!secret || code !== secret) {
+        return res.status(403).json({ message: 'Code encadrant invalide' });
+      }
+    }
     try {
       const existing = await db.query('SELECT id FROM users WHERE email = $1', [email]);
       if (existing.rows.length) {
